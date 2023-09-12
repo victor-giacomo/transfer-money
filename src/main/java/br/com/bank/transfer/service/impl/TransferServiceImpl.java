@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,9 +46,7 @@ public class TransferServiceImpl implements TransferService {
     public List<TransferHistory> history(Long userId) {
         User user = new User(userId);
 
-        List<Transfer> transfers = transferRepository.findBySender(user);
-        transfers.addAll(transferRepository.findByReceiver(user));
-        transfers.sort(Comparator.comparing(Transfer::getMoment));
+        List<Transfer> transfers = transferRepository.find(user);
 
         return transfers.stream().map(transfer -> {
 
