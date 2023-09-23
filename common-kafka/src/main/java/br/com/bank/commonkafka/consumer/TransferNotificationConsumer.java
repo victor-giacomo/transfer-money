@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @Service
-public class TransferKafkaConsumer {
+public class TransferNotificationConsumer {
 
     @Value(value = "${send.email.url}")
     private String EMAIL_SENDER_URL;
@@ -21,12 +21,12 @@ public class TransferKafkaConsumer {
     private final TransferNotificationService transferNotificationService;
     private final RestTemplate restTemplate;
 
-    public TransferKafkaConsumer(TransferNotificationService transferNotificationService, RestTemplate restTemplate) {
+    public TransferNotificationConsumer(TransferNotificationService transferNotificationService, RestTemplate restTemplate) {
         this.transferNotificationService = transferNotificationService;
         this.restTemplate = restTemplate;
     }
 
-    @KafkaListener(topics = "${kafka.transfer.notification.topic}", groupId = "send_email_transfer_group")
+    @KafkaListener(topics = "${kafka.transfer.topic}", groupId = "${kafka.transfer.email.group}")
     @RetryableTopic(attempts = "${kafka.producer.retries}", backoff = @Backoff(30000L))
     public void execute(TransferNotification notification) {
         restTemplate.postForEntity(EMAIL_SENDER_URL, notification.getEmail(), Map.class);
@@ -35,7 +35,7 @@ public class TransferKafkaConsumer {
         transferNotificationService.changeStatus(result);
     }
 
-    @KafkaListener(topics = "${kafka.transfer.notification.topic.dlt}", groupId = "send_email_transfer_group")
+    @KafkaListener(topics = "${kafka.transfer.topic.dlt}", groupId = "${kafka.transfer.email.group}")
     public void executeDlt(TransferNotification notification) {
         TransferNotification result = buildNotification(notification.getUuid(), NotificationStatus.ERROR);
         transferNotificationService.changeStatus(result);

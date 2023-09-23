@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MessageController {
 
-    @Value("${kafka.transfer.notification.topic}")
+    @Value("${kafka.transfer.topic}")
     private String MESSAGE_TRANSFER_TOPIC;
 
     private final KafkaDispatcher<TransferNotification> kafkaDispatcher;
