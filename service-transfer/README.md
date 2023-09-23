@@ -1,4 +1,4 @@
-# Transfer-Money Project
+# Transfer-Money Service
 
 ## How to run:
 
