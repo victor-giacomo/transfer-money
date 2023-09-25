@@ -1,0 +1,67 @@
+version: '3'
+
+networks:
+    transfer-money-net:
+        name: transfer-money-net
+        driver: bridge
+
+services:
+
+    service-transfer:
+        container_name: service-transfer
+        build:
+            context: ./service-transfer
+        image: victorgiacomo/service-transfer-money:latest
+        environment:
+            COMMON_KAFKA_SERVER: common-kafka:8081
+        networks:
+            - transfer-money-net
+        depends_on:
+            - common-kafka
+        ports:
+            - 8080:8080
+
+    common-kafka:
+        container_name: common-kafka
+        build:
+            context: ./common-kafka
+        image: victorgiacomo/common-kafka:latest
+        environment:
+            BOOTSTRAP_SERVER: kafka-server:29092
+            TRANSFER_SERVER: service-transfer:8080
+        networks:
+            - transfer-money-net
+        depends_on:
+            - kafka-server
+        ports:
+            - 8081:8081
+
+    kafka-server:
+        container_name: kafka-server
+        image: confluentinc/cp-kafka:latest
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+            KAFKA_LISTENERS: DOCKER_INTERNAL://:29092,DOCKER_EXTERNAL://:9092
+            KAFKA_ADVERTISED_LISTENERS: DOCKER_INTERNAL://kafka-server:29092,DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_INTERNAL:PLAINTEXT,DOCKER_EXTERNAL:PLAINTEXT
+            KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_INTERNAL
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper-server:2181
+            KAFKA_BROKER_ID: 1
+            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+            KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+        networks:
+            - transfer-money-net
+        depends_on:
+            - zookeeper-server
+        ports:
+            - 9092:9092
+
+    zookeeper-server:
+        container_name: zookeeper-server
+        image: confluentinc/cp-zookeeper:latest
+        environment:
+            ZOOKEEPER_CLIENT_PORT: 2181
+        networks:
+            - transfer-money-net
+        ports:
+            - 22181:2181

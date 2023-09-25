@@ -9,6 +9,8 @@ import br.com.bank.transfer.service.TransferNotificationService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TransferNotificationServiceImpl implements TransferNotificationService {
 
@@ -18,6 +20,11 @@ public class TransferNotificationServiceImpl implements TransferNotificationServ
     public TransferNotificationServiceImpl(TransferNotificationRepository repository, MessageService messageService) {
         this.repository = repository;
         this.messageService = messageService;
+    }
+
+    @Override
+    public List<TransferNotification> list() {
+        return repository.findAll();
     }
 
     @Override

@@ -3,6 +3,7 @@ package br.com.bank.transfer;
 import br.com.bank.transfer.domain.User;
 import br.com.bank.transfer.domain.UserType;
 import br.com.bank.transfer.exception.BusinessException;
+import br.com.bank.transfer.exception.NotFoundException;
 import br.com.bank.transfer.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ class UserTests {
 	@Test
 	void findByIdNotFound() {
 		Long idTest = 0L;
-		Exception exception = assertThrows(BusinessException.class, () -> userService.find(idTest));
+		Exception exception = assertThrows(NotFoundException.class, () -> userService.find(idTest));
 		assertThat(exception.getMessage()).isNotNull();
 	}
 
@@ -63,7 +64,7 @@ class UserTests {
 	@Test
 	void findByDocumentNotFound() {
 		String document = "invalid_document";
-		Exception exception = assertThrows(BusinessException.class, () -> userService.find(document));
+		Exception exception = assertThrows(NotFoundException.class, () -> userService.find(document));
 		assertThat(exception.getMessage()).isNotNull();
 	}
 

@@ -1,14 +1,24 @@
 # Transfer-Money Project
 
+## Description:
+
+This project allows money transfers between users. 
+Upon receiving a transfer, the user should be notified by email, which is sent asynchronously and makes up to 5 new attempts in case of failure.
+
 ## How to run:
 
-    - With Docker: 
-    docker run -p 8080:8080 victorgiacomo/transfer-money
-    Requirements: Docker installed
+    * With Docker: 
+    docker compose up
+    Requirements: 
+        - Docker installed
     
-    - With Maven:
-    mvn spring-boot:run
-    Requirements: JDK 8+ and Maven installed
+    * With Maven:
+    mvn spring-boot:run (on each module)
+    Requirements: 
+        - JDK 17+ installed
+        - Maven installed  
+        - Kafka running (default port)
+        - Zookepper running (default port)
 
 ### Reference Documentation
 http://localhost:8080/swagger-ui/index.html
